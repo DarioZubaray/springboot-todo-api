@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import com.zubaray.todo.models.Todo;
 import com.zubaray.todo.repository.TodoRepository;
 
-@Service("InMemoryTodoListRepositoryImpl")
+@Service
+@Profile("dev")
 public class InMemoryTodoListRepositoryImpl implements TodoRepository {
 
     private List<Todo> todoList = new ArrayList<>();
@@ -22,20 +24,19 @@ public class InMemoryTodoListRepositoryImpl implements TodoRepository {
     }
 
     @Override
-    public Todo updateTodoMessage(Long id, Todo newTodo) {
+    public void updateTodoMessage(Long id, Todo newTodo) {
         todoList = todoList.stream()
                 .map(todo -> !todo.getId().equals(id) ? todo : newTodo)
                 .collect(Collectors.toList());
-        return newTodo;
     }
 
     @Override
-    public Todo updateTodo(Long id, String newMessage) {
-        return todoList.stream()
-                .filter(todo -> todo.getId().equals(id))
-                .peek(todo -> todo.setMessage(newMessage))
-                .findFirst()
-                .get();
+    public void updateTodo(Long id, String newMessage) {
+        todoList.stream()
+            .filter(todo -> todo.getId().equals(id))
+            .peek(todo -> todo.setMessage(newMessage))
+            .findFirst()
+            .get();
     }
 
     @Override
