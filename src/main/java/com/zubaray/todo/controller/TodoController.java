@@ -2,10 +2,13 @@ package com.zubaray.todo.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -29,10 +32,20 @@ public class TodoController {
     @Autowired
     private TodoRepository repository;
 
-    @GetMapping("/findby/{id}")
-    public Todo findById(@PathVariable Long id) {
-        log.debug("Finding Todo by id: {}", id);
-        return repository.findById(id).get();
+    @GetMapping("/findby/{todoId}")
+    public ResponseEntity<?> findById(@PathVariable String todoId) {
+        log.debug("Finding Todo by id: {}", todoId);
+        try {
+            Long id = Long.valueOf(todoId);
+            Optional<Todo> todo = repository.findById(id);
+            if (todo.isPresent()) {
+                return ResponseEntity.ok(todo.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch(NumberFormatException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/all")
@@ -44,30 +57,34 @@ public class TodoController {
     }
 
     @PostMapping()
-    public Todo addEntity(@RequestBody Todo todo) {
+    public ResponseEntity<Todo> addTodo(@RequestBody Todo todo) {
         log.debug("Saving new Todo: {}", todo.getMessage());
-        return repository.save(todo);
+        Todo todoSaved = repository.save(todo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(todoSaved);
     }
 
     @PutMapping("/{id}")
     @Transactional
-    public void updateTodoMessage(@PathVariable Long id, @RequestBody Todo newTodo) {
+    public ResponseEntity<Void> updateTodoMessage(@PathVariable Long id, @RequestBody Todo newTodo) {
         log.debug("Put - Updating Todo with id: {}", id);
         repository.updateTodoMessage(id, newTodo);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @PatchMapping("/{id}/{newMessage}")
     @Transactional
-    public void updateTodo(@PathVariable Long id, @PathVariable String newMessage) {
+    public ResponseEntity<Void> updateTodo(@PathVariable Long id, @PathVariable String newMessage) {
         log.debug("Patch - Updating Todo with id: {}", id);
         repository.updateTodo(id, newMessage);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
     @DeleteMapping("/{id}")
     @Transactional
-    public void deleteTodo(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
         log.debug("Deleting Todo with id: {}", id);
         repository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
