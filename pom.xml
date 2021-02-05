@@ -13,7 +13,7 @@
 
 	<groupId>com.zubaray</groupId>
 	<artifactId>todo</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>todo</name>
 	<description>Demo project for Spring Boot</description>
 
