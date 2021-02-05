@@ -110,6 +110,18 @@ class TodoControllerTest {
     }
 
     @Test
+    void testaddTodo_badRequest() throws Exception {
+        mvc.perform(post("/api/todo/")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(new ObjectMapper().writeValueAsString(new Todo())))
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.timestamp", is(anything())))
+            .andExpect(jsonPath("$.status", is(400)))
+            .andExpect(jsonPath("$.errors[*]", containsInAnyOrder("Datetime is mandatory", "Message is mandatory", "Finished is mandatory")));
+    }
+
+    @Test
     void testUpdateTodoMessage_Ok() throws Exception {
         doNothing().when(repository).updateTodoMessage(Mockito.anyLong(), Mockito.any());
         Todo todo = getValidNewTodo();
@@ -119,6 +131,19 @@ class TodoControllerTest {
                 .content(new ObjectMapper().writeValueAsString(todo)))
                 .andDo(print())
                 .andExpect(status().isAccepted());
+    }
+
+    @Test
+    void testUpdateTodoMessage_badRequest() throws Exception {
+        mvc.perform(put("/api/todo/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(new Todo())))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.timestamp", is(anything())))
+                .andExpect(jsonPath("$.status", is(400)))
+                .andExpect(jsonPath("$.errors[*]", containsInAnyOrder("Datetime is mandatory", "Message is mandatory", "Finished is mandatory")));
+;
     }
 
     @Test

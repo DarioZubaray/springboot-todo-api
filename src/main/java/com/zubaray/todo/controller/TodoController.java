@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,7 +58,7 @@ public class TodoController {
     }
 
     @PostMapping()
-    public ResponseEntity<Todo> addTodo(@RequestBody Todo todo) {
+    public ResponseEntity<Todo> addTodo(@Valid @RequestBody Todo todo) {
         log.debug("Saving new Todo: {}", todo.getMessage());
         Todo todoSaved = repository.save(todo);
         return ResponseEntity.status(HttpStatus.CREATED).body(todoSaved);
@@ -65,7 +66,7 @@ public class TodoController {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<Void> updateTodoMessage(@PathVariable Long id, @RequestBody Todo newTodo) {
+    public ResponseEntity<Void> updateTodoMessage(@PathVariable Long id, @Valid @RequestBody Todo newTodo) {
         log.debug("Put - Updating Todo with id: {}", id);
         repository.updateTodoMessage(id, newTodo);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
