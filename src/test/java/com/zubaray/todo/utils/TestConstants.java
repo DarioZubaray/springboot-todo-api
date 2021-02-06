@@ -7,6 +7,8 @@ import com.zubaray.todo.models.Todo;
 
 public class TestConstants {
 
+    public static String JSON_WEB_TOKEN = "jwt.token";
+
     public static Todo getValidTodoById_1() {
         Todo todo = new Todo();
         todo.setId(1L);
@@ -37,6 +39,7 @@ public class TestConstants {
         newTodo.setId(4L);
         newTodo.setMessage("Nuevo todo");
         newTodo.setFinished(false);
+        newTodo.setDatetime(LocalDateTime.now());
         return newTodo;
     }
 }

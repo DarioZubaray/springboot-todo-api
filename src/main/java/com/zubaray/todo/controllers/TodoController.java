@@ -1,4 +1,4 @@
-package com.zubaray.todo.controller;
+package com.zubaray.todo.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
